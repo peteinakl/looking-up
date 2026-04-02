@@ -1,0 +1,16 @@
+{
+  "name": "looking-up",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Real-time zenithal sky viewer",
+  "scripts": {
+    "proxy": "node proxy.js",
+    "serve": "npx serve .",
+    "dev": "node proxy.js & npx serve .",
+    "worker:dev": "cd worker && npx wrangler dev",
+    "worker:deploy": "cd worker && npx wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^3"
+  }
+}

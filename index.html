@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Looking Up</title>
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- satellite.js v6 — SGP4 propagation -->
+  <script src="https://cdn.jsdelivr.net/npm/satellite.js@6.0.0/dist/satellite.min.js"></script>
+
+  <!-- astronomy-engine — planets, Moon, Sun position -->
+  <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.min.js"></script>
+</head>
+<body>
+  <canvas id="sky"></canvas>
+
+  <!-- UI panels injected by JS modules -->
+  <div id="hud"></div>
+  <div id="callout"></div>
+  <div id="loading-bar"></div>
+  <button id="reset-btn" title="Reset view (double-click)">⟲</button>
+
+  <!-- v2 time scrubber slot — reserved, not implemented in v1 -->
+  <div id="scrubber-slot" data-scrubber-slot aria-hidden="true"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

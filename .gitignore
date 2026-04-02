@@ -1,0 +1,7 @@
+node_modules/
+worker/node_modules/
+.wrangler/
+config.local.js
+.env
+.DS_Store
+*.log
