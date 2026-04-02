@@ -12,6 +12,7 @@ import { initViewport } from './ui/viewport.js';
 import { initHud } from './ui/hud.js';
 import { initCallout, drawCallout } from './ui/callout.js';
 import { initLoadingBar } from './ui/loading.js';
+import { initCompass } from './ui/compass.js';
 
 // ─── Shared State ────────────────────────────────────────────────────────────
 // Single mutable object passed by reference to all modules.
@@ -110,6 +111,7 @@ async function init() {
   initHud(state);
   initCallout(canvas, state);
   initLoadingBar(state);
+  initCompass(state);
 
   // Start render loop
   startRenderLoop(state, draw);

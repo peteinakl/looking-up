@@ -212,6 +212,95 @@ html, body {
   #loading-bar { font-size: 8px; letter-spacing: 0.07em; }
 }
 
+/* ─── Colour Key ─────────────────────────────────────────────────── */
+#colour-key {
+  position: fixed;
+  bottom: 66px;
+  left: 0;
+  right: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  padding: 0 16px;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0.7;
+}
+
+.ck-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Azeret Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.ck-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ─── Compass ────────────────────────────────────────────────────── */
+#compass {
+  position: fixed;
+  bottom: 70px;
+  right: 16px;
+  width: 52px;
+  height: 52px;
+  z-index: 11;
+  pointer-events: none;
+  opacity: 0.35;
+  transition: opacity 0.5s ease;
+}
+
+#compass.compass-rotated {
+  opacity: 1;
+}
+
+.compass-ring {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(4, 4, 10, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.compass-ring span {
+  position: absolute;
+  font-family: 'Azeret Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+}
+
+.compass-n { top: 20%; left: 50%; color: rgba(255, 255, 255, 0.78); }
+.compass-e { top: 50%; left: 80%; color: rgba(255, 255, 255, 0.22); }
+.compass-s { top: 80%; left: 50%; color: rgba(255, 255, 255, 0.22); }
+.compass-w { top: 50%; left: 20%; color: rgba(255, 255, 255, 0.22); }
+
+.compass-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  transform: translate(-50%, -50%);
+}
+
 /* ─── Callout Panel ──────────────────────────────────────────────── */
 #callout {
   position: fixed;

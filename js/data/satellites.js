@@ -196,10 +196,12 @@ function _propagateAll() {
         sunlit,
         eciPos:   posVel.position,
         propTime: ts,
-        prevAlt:  prev ? prev.alt              : lookAngles.elevation,
-        prevAz:   prev ? prev.az               : lookAngles.azimuth,
-        prev2Alt: prev ? (prev.prevAlt ?? null) : null,  // ~6s ago
-        prev2Az:  prev ? (prev.prevAz  ?? null) : null,
+        prevAlt:  prev ? prev.alt               : lookAngles.elevation,
+        prevAz:   prev ? prev.az                : lookAngles.azimuth,
+        prev2Alt: prev ? (prev.prevAlt ?? null)  : null,  // ~6s ago
+        prev2Az:  prev ? (prev.prevAz  ?? null)  : null,
+        prev3Alt: prev ? (prev.prev2Alt ?? null) : null,  // ~9s ago
+        prev3Az:  prev ? (prev.prev2Az  ?? null) : null,
       };
 
       positions.set(id, current);

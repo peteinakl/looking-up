@@ -71,6 +71,19 @@ d3-celestial stores RA directly as longitude in the standard GeoJSON range [-180
    - Pass B: `prev → current`  (brighter) — overlaps recent ~3s, making head brighter
    No per-sat `createLinearGradient` — each sat type = exactly 2 `stroke()` calls.
 
+## 2026-04-03 · Compass rose — pure DOM rotation
+✅ Rotating inner `<div>` via `transform: rotate(Xrad)` set by a JS interval (80ms).
+   No canvas. Dims to 0.35 opacity at rotation=0; CSS transition to opacity 1 when
+   rotated >5°. N/E/S/W single-letter labels; N always at 0.78 opacity so north
+   is identifiable even while the compass is spinning.
+
+## 2026-04-03 · 10-second trails via 3-pass batch overlap
+✅ Added `prev3Alt/prev3Az` (shifted from `prev2` each propagation cycle = ~9s old).
+   Three batch passes per sat type: A (prev3→current, faint), B (prev2→current,
+   medium), C (prev→current, bright). Successive overlaps stack opacity cleanly:
+   head ≈ 0.49 for regular sats, ≈ 0.36 for Starlink. Still 3 `stroke()` calls
+   per type total — zero per-sat canvas state changes.
+
 ## 2026-04-02 · Starlink not clickable by default
 ❌ Hit-test excluded Starlink (`!isStarlink` guard) as "too dense to select".
 ✅ All sats including Starlink are registered in `renderedObjects` every frame.

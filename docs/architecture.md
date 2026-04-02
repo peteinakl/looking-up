@@ -102,19 +102,19 @@ to 30s for the scheduled check.
 
 ## Satellite Trails
 
-All non-ISS satellites have a ~4-second fading trail, rendered in two batched
+All non-ISS satellites have a ~10-second fading trail, rendered in three batched
 passes per type (regular cyan / Starlink warm-white):
 
-- **Pass A** — `prev2Alt/prev2Az` → current interpolated position (faint stroke).
-  Covers ~6s of history.
-- **Pass B** — `prevAlt/prevAz` → current (brighter stroke). Overlaps the recent
-  ~3s, making the head visibly brighter than the tail — a fade without per-sat
-  gradient creation.
+- **Pass A** — `prev3Alt/prev3Az` → current (faint). Covers ~9s of history.
+- **Pass B** — `prev2Alt/prev2Az` → current (medium). Overlaps the recent ~6s.
+- **Pass C** — `prevAlt/prevAz` → current (bright). Overlaps the recent ~3s.
 
-Each type = exactly 2 `ctx.stroke()` calls per frame regardless of sat count.
+The successive overlaps stack opacity: tail (A only) = very faint; mid (A+B) =
+medium; head (A+B+C) = clearly visible. Head opacity ≈ 0.49 for regular sats,
+≈ 0.36 for Starlink. No per-sat gradient creation — each type = 3 `stroke()` calls.
 
-`prev2Alt/prev2Az` is stored by shifting `prevAlt/prevAz` forward each
-propagation cycle (every 3s). ISS has its own longer trail system (12 × 10s).
+Position history is shifted forward each propagation cycle (every 3s):
+`prev` → `prev2` → `prev3`. ISS has its own longer trail system (12 × 10s).
 
 ## Loading Bar
 
@@ -126,6 +126,22 @@ A slim bar at viewport bottom shows satellite acquisition in three phases:
 `state.satellites.loading.starlink` initialises to `true` (not `false`) so the
 bar correctly shows phase 2 while waiting for Starlink, rather than jumping to
 phase 3 immediately.
+
+## Compass Rose
+
+`js/ui/compass.js` — fixed 52×52px circle, lower-right corner, above the scrubber slot.
+The inner ring rotates via `transform: rotate(Xrad)` updated every 80ms from
+`state.viewport.rotation`. N/E/S/W letters are positioned at the cardinal points;
+N is always visually brightest. Dims to 0.35 opacity when north is up (default);
+transitions to full opacity when the view is rotated more than ~5°.
+
+## Colour Key
+
+Static HTML strip (`#colour-key`) centred at the bottom, left of the compass.
+Six items — Stars, Planets, Moon, ISS, Satellites, Starlink — each with a 5px
+dot in the exact colour used to render that object. No JS required. Positioned
+at `bottom: 66px`, above the loading bar zone. `right: 80px` keeps it clear of
+the compass on all screen sizes; `flex-wrap` handles narrow viewports.
 
 ## ISS Special Rendering
 

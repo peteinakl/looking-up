@@ -4,6 +4,8 @@ A fullscreen real-time sky viewer — point your phone at the ceiling and see ev
 
 Stars, constellation lines, planets, the Moon, ISS with trail, active satellites, and the full Starlink constellation are rendered on a zoomable, pannable canvas using your actual GPS position.
 
+![Looking Up — Auckland, NZ](looking_up.png)
+
 ## Local development
 
 ```bash

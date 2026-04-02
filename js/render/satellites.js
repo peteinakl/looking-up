@@ -28,7 +28,11 @@ export function drawSatellites(ctx, state) {
 
   const curInterps = new Map();  // cache per-sat interpolated position
 
-  function _trailBatch(filter, colA, colB, lwA, lwB) {
+  // Three-pass overlap: A (oldest→current), B (prev2→current), C (prev→current).
+  // Each successive pass starts closer to now, so the overlapping region near the
+  // head accumulates opacity — a smooth fade without per-sat gradient creation.
+  // Combined head opacity: A+B+C. Tail (oldest segment only): A alone.
+  function _trailBatch(filter, colA, colB, colC, lwA, lwB, lwC) {
     const head = [];
     for (const id of aboveHorizon) {
       if (!filter(id)) continue;
@@ -39,14 +43,14 @@ export function drawSatellites(ctx, state) {
       head.push({ id, pos, i0 });
     }
 
-    // Sub-pass A: from prev2 (or prev if no prev2) to current — faint
+    // Pass A: oldest anchor (prev3 → prev2 → prev, whichever exists) → current
     ctx.save();
     ctx.strokeStyle = colA;
     ctx.lineWidth   = lwA;
     ctx.beginPath();
     for (const { pos, i0 } of head) {
-      const tailAlt = pos.prev2Alt ?? pos.prevAlt;
-      const tailAz  = pos.prev2Az  ?? pos.prevAz;
+      const tailAlt = pos.prev3Alt ?? pos.prev2Alt ?? pos.prevAlt;
+      const tailAz  = pos.prev3Az  ?? pos.prev2Az  ?? pos.prevAz;
       const p0 = project(tailAlt, tailAz, viewport);
       const p1 = project(i0.alt, i0.az, viewport);
       if (!p0 || !p1) continue;
@@ -56,10 +60,26 @@ export function drawSatellites(ctx, state) {
     ctx.stroke();
     ctx.restore();
 
-    // Sub-pass B: from prev to current — brighter (makes recent portion stand out)
+    // Pass B: prev2 → current
     ctx.save();
     ctx.strokeStyle = colB;
     ctx.lineWidth   = lwB;
+    ctx.beginPath();
+    for (const { pos, i0 } of head) {
+      if (pos.prev2Alt == null) continue;
+      const p0 = project(pos.prev2Alt, pos.prev2Az, viewport);
+      const p1 = project(i0.alt, i0.az, viewport);
+      if (!p0 || !p1) continue;
+      ctx.moveTo(p0.x, p0.y);
+      ctx.lineTo(p1.x, p1.y);
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    // Pass C: prev → current (brightest — recent 3s)
+    ctx.save();
+    ctx.strokeStyle = colC;
+    ctx.lineWidth   = lwC;
     ctx.beginPath();
     for (const { pos, i0 } of head) {
       const p0 = project(pos.prevAlt, pos.prevAz, viewport);
@@ -72,23 +92,25 @@ export function drawSatellites(ctx, state) {
     ctx.restore();
   }
 
-  // Regular sat trails
+  // Regular sat trails — head opacity ≈ 0.08+0.15+0.26 = 0.49
   if (layers.satellites) {
     _trailBatch(
       id => id !== ISS_ID && !starlinkIds.has(id) && !stationIds.has(id),
-      'rgba(102, 204, 204, 0.10)',   // A: faint tail
-      'rgba(102, 204, 204, 0.18)',   // B: brighter overlap on recent portion
-      0.7, 0.9
+      'rgba(102, 204, 204, 0.08)',
+      'rgba(102, 204, 204, 0.15)',
+      'rgba(102, 204, 204, 0.26)',
+      0.6, 0.8, 1.0
     );
   }
 
-  // Starlink trails
+  // Starlink trails — head opacity ≈ 0.05+0.11+0.20 = 0.36
   if (layers.starlink) {
     _trailBatch(
       id => starlinkIds.has(id),
-      'rgba(255, 224, 176, 0.07)',   // A: faint tail
-      'rgba(255, 224, 176, 0.14)',   // B: brighter overlap on recent portion
-      0.6, 0.8
+      'rgba(255, 224, 176, 0.05)',
+      'rgba(255, 224, 176, 0.11)',
+      'rgba(255, 224, 176, 0.20)',
+      0.5, 0.7, 0.9
     );
   }
 
